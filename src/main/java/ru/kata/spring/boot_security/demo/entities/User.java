@@ -52,6 +52,9 @@ public class User implements UserDetails {
     @Column(name="age")
     private Long age;
 
+
+
+
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"),
@@ -163,4 +166,6 @@ public class User implements UserDetails {
     public void setAge(Long age) {
         this.age = age;
     }
+
+
 }

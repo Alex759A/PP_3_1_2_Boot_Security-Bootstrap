@@ -13,6 +13,7 @@ public interface UserService extends UserDetailsService {
 
     public List<User> findAll();
     public boolean saveUser(User user);
+//    public boolean updateUserRest(User user);
     public void update(Long id, User updateUser);
 
     public boolean delete(Long userId);

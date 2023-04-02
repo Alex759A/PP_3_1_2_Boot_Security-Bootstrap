@@ -34,20 +34,20 @@ public class AdminController {
         return "admin";
     }
 
-    @GetMapping("/new")
-    public String newUser(@ModelAttribute("user") User user) {
-        return "newUser";
-    }
-
-    @PostMapping("/new")
-    public String createUser(@ModelAttribute("user") @Valid User user,
-                             BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            return "newUser";
-        userService.saveUser(user);
-        return "redirect:/admin";
-
-    }
+//    @GetMapping("/new")
+//    public String newUser(@ModelAttribute("user") User user) {
+//        return "newUser";
+//    }
+//
+//    @PostMapping("/new")
+//    public String createUser(@ModelAttribute("user") @Valid User user,
+//                             BindingResult bindingResult) {
+//        if (bindingResult.hasErrors())
+//            return "newUser";
+//        userService.saveUser(user);
+//        return "redirect:/admin";
+//
+//    }
 
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("user") @Valid User user,
@@ -59,9 +59,9 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable("id") Long id) {
-        userService.delete(id);
-        return "redirect:/admin";
-    }
+//    @DeleteMapping("/{id}")
+//    public String deleteUser(@PathVariable("id") Long id) {
+//        userService.delete(id);
+//        return "redirect:/admin";
+//    }
 }
