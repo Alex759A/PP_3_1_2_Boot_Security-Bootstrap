@@ -76,7 +76,7 @@
                                         <th scope="col">Delete</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id = "t_body">
                                     <tr id = "tr_table">
 
 
@@ -367,7 +367,7 @@
                                                             <div class="form-group">
                                                                 <label for="roles" ><strong>Role</strong></label>
                                                                 <select class="custom-select" name="roles" id="rolesE">
-                                                                    <option selected>ROLE</option>
+                                                                    <option selected>USER</option>
                                                                     <option value="0">ADMIN</option>
                                                                     <option value="1">GUEST</option>
                                                                     <option value="2">USER</option>
@@ -569,6 +569,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<!--        <script src="/static/adm.js"></script>-->
 
         <script>
 
@@ -580,14 +581,11 @@
                     method: "GET",
                     headers: { "Accept": "application/json" }
                 });
-                // если запрос прошел нормально
                 if (response.ok === true) {
-                    // получаем данные
                     const users = await response.json();
                     console.log(users);
-                    let rows = document.querySelector("tbody");
+                    let rows = document.getElementById("t_body");
                     users.forEach(user => {
-                        // добавляем полученные элементы в таблицу
                         rows.append(row(user));
                     });
                 }
@@ -648,12 +646,6 @@
                 removeLink.setAttribute("data-toggle", "modal");
                 removeLink.setAttribute("data-target", "#userDeleteDialog");
                 removeLink.append("Удалить");
-
-                // removeLink.addEventListener("click", e => {
-                //     e.preventDefault();
-                //     deleteUser(user.id);
-                // });
-
                 removeLink.addEventListener("click", e => {
                     e.preventDefault();
                     getUserD(user.id);
@@ -712,7 +704,7 @@
                     form.elements["username"].value = user.username;
                     form.elements["password"].value = user.password;
                     form.elements["roles"].value = user.roles.map(r=>r.name)
-                    // form.elements["roles"].value = user.roles.map(role => role.name);
+
 
                 }
                 document.getElementById('delete-userBtn').addEventListener("click", e => {
@@ -724,16 +716,17 @@
 
             // Удаление пользователя
             async function deleteUser(id) {
-                const response = await fetch("/api/allUsers/" + id, {
+                let urlDel = "/api/allUsers/" + id;
+                let method = {
                     method: "DELETE",
-                    headers: { "Accept": "application/json" }
-                });
-                if (response.ok === true) {
-                    const user = await response.json();
-                    resetD();
-                    document.querySelector("tr[data-rowId='" + user.id + "']").remove();
-
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
                 }
+                await fetch(urlDel,method).then(() => {
+                    resetD();
+                    getUsersRem();
+                })
 
             }
             function resetD() {
@@ -744,17 +737,17 @@
 
             //     Изменение пользователя
             async function editUser(user) {
-                const response = await fetch("api/allUsers", {
+                let urlEdit = "api/allUsers";
+                const response =  {
                     method: "PUT",
                     headers: {"Content-Type": "application/json" },
                     body: JSON.stringify(user)
-                });
-                if (response.ok === true) {
-                    const user = await response.json();
-                    reset();
-                    document.querySelector("tr[data-rowId='" + user.id + "']").replaceWith(row(user));
-
                 }
+
+                await fetch(urlEdit,response).then(() => {
+                    reset();
+                    getUsersRem();
+                })
             }
                 // сброс формы
             function reset() {
@@ -794,14 +787,6 @@
                         setRoles[form.elements["roles"].value]
                     ]
 
-                    // roles: [
-                    //     {
-                    //         id: 3,
-                    //         name: "ROLE_USER"
-                    //         // authority: "ROLE_USER"
-                    //     }
-                    // ]
-
                 };
                 editUser(user);
            });
@@ -838,42 +823,51 @@
                         setRoles[formNew.elements["roles"].value]
                     ]
 
-
-
-                    // roles: [
-                    //     {
-                    //         id: 3,
-                    //         name: formNew.elements["roles"].value,
-                    //         authority: formNew.elements["roles"].value
-                    //     }
-                    // ]
                 };
 
                 createUser(user);
             });
 
                 // Добавление пользователя
-                async function createUser(user) {
-                    // formNew.submit();
-                    let closeNewModal = document.getElementById('closeNewModal');
+            async function createUser(user) {
+                // formNew.submit();
+                let closeNewModal = document.getElementById('closeNewModal');
+                let urlGet = "api/allUsers";
 
-                    const response = fetch("api/allUsers", {
-                        method: "POST",
-                        headers: { "Accept": "application/json", "Content-Type": "application/json" },
-                        body: JSON.stringify(user)
-                    });
+                const response = fetch("api/allUsers", {
+                    method: "POST",
+                    headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                    body: JSON.stringify(user)
+                });
 
-                    if (response.ok === true) {
-
-                        const user = await response.json();
-                        console.log(response.body+ " Это Боди");
-                        console.log(response.json() + "  Это json");
-
-
-                    }
-                    closeNewModal.click();
-
+                if (response.ok === true) {
+                    const user = await response.json();
                 }
+
+                await fetch(urlGet,response).then(() => {
+                    const formNew = document.getElementById('formNew');
+                    formNew.reset();
+                    closeNewModal.click();
+                    getUsersRem();
+                })
+
+            }
+
+            async function getUsersRem() {
+                const response = await fetch("/api/allUsers", {
+                    method: "GET",
+                    headers: { "Accept": "application/json" }
+                });
+                if (response.ok === true) {
+                    const users = await response.json();
+                    let rows = document.getElementById("t_body");
+                    let dataHtml = "";
+                    rows.innerHTML=dataHtml;
+                    users.forEach(user => {
+                        rows.append(row(user));
+                    });
+                }
+            }
 
             getUsers();
         </script>
